@@ -9,32 +9,35 @@ import (
 	"strings"
 )
 
+const (
+	inf           = math.MaxInt64
+	mod1000000007 = 1000000007
+	mod998244353  = 998244353
+	mod           = mod1000000007
+)
+
 var sc = bufio.NewScanner(os.Stdin)
 var wtr = bufio.NewWriter(os.Stdout)
 
 func main() {
 	defer flush()
-	n, m := scanInt2()
-	as := scanIntSlice(n)
-	sum := 0
-	for _, a := range as {
-		sum += a
+	n := scanInt()
+	S := make([]string, 0, n)
+	for i := 0; i < n; i++ {
+		S = append(S, scanString())
 	}
-	if sum <= m {
-		out("Yes")
-	} else {
-		out("No")
+	dict := make(map[string]bool)
+	for i := 0; i < n; i++ {
+		for j := 0; j < n; j++ {
+			if i == j {
+				continue
+			}
+			// out(S[i] + S[j])
+			dict[S[i]+S[j]] = true
+		}
 	}
+	out(len(dict))
 }
-
-// ==================================================
-// init
-// ==================================================
-
-const inf = math.MaxInt64
-const mod1000000007 = 1000000007
-const mod998244353 = 998244353
-const mod = mod1000000007
 
 func init() {
 	sc.Buffer([]byte{}, math.MaxInt64)

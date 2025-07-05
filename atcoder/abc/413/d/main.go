@@ -14,16 +14,10 @@ var wtr = bufio.NewWriter(os.Stdout)
 
 func main() {
 	defer flush()
-	n, m := scanInt2()
-	as := scanIntSlice(n)
-	sum := 0
-	for _, a := range as {
-		sum += a
-	}
-	if sum <= m {
-		out("Yes")
-	} else {
-		out("No")
+	n := scanInt()
+	for i := 0; i < n; i++ {
+		a, b := scanInt2()
+		out(a + b)
 	}
 }
 

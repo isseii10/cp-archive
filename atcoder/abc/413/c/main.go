@@ -14,16 +14,32 @@ var wtr = bufio.NewWriter(os.Stdout)
 
 func main() {
 	defer flush()
-	n, m := scanInt2()
-	as := scanIntSlice(n)
-	sum := 0
-	for _, a := range as {
-		sum += a
-	}
-	if sum <= m {
-		out("Yes")
-	} else {
-		out("No")
+	q := scanInt()
+	deq := NewDeque[[2]int]()
+	for i := 0; i < q; i++ {
+		qtype := scanInt()
+		switch qtype {
+		case 1:
+			c, x := scanInt2()
+			deq.PushBack([2]int{c, x})
+		case 2:
+			k := scanInt()
+			ans := 0
+			for k > 0 {
+				arr := deq.PopFront()
+				c, x := arr[0], arr[1]
+				if c <= k {
+					ans += c * x
+				} else {
+					ans += k * x
+					deq.PushFront([2]int{c - k, x})
+					break
+				}
+				k -= c
+			}
+			out(ans)
+		}
+
 	}
 }
 
@@ -40,9 +56,12 @@ func init() {
 	sc.Buffer([]byte{}, math.MaxInt64)
 	sc.Split(bufio.ScanWords)
 
-	if f, err := os.Open("./input"); err == nil {
-		sc = bufio.NewScanner(f)
-		sc.Split(bufio.ScanWords)
+	if len(os.Args) > 1 && os.Args[1] == "i" {
+		b, e := os.ReadFile("./input")
+		if e != nil {
+			panic(e)
+		}
+		sc = bufio.NewScanner(strings.NewReader(strings.Replace(string(b), " ", "\n", -1)))
 	}
 }
 
@@ -323,70 +342,76 @@ func (h *Heap) Pop() interface{} {
 // =====================================================================================
 // stack and queue
 // =====================================================================================
-type Stack []int
+type Stack[T any] []T
 
-func NewStack() *Stack {
-	return &Stack{}
+func NewStack[T any]() *Stack[T] {
+	return &Stack[T]{}
 }
-func (s *Stack) Push(v int) {
+
+func (s *Stack[T]) Push(v T) {
 	*s = append(*s, v)
 }
-func (s *Stack) Pop() int {
+
+func (s *Stack[T]) Pop() T {
 	old := *s
 	n := len(old)
 	x := old[n-1]
 	*s = old[:n-1]
 	return x
 }
-func (s *Stack) IsEmpty() bool {
+
+func (s *Stack[T]) IsEmpty() bool {
 	return len(*s) == 0
 }
 
 // queue
-type Queue []int
+type Queue[T any] []T
 
-func NewQueue() *Queue {
-	return &Queue{}
+func NewQueue[T any]() *Queue[T] {
+	return &Queue[T]{}
 }
-func (q *Queue) Push(v int) {
+
+func (q *Queue[T]) Push(v T) {
 	*q = append(*q, v)
 }
-func (q *Queue) Pop() int {
+
+func (q *Queue[T]) Pop() T {
 	old := *q
 	x := old[0]
 	*q = old[1:]
 	return x
 }
-func (q *Queue) IsEmpty() bool {
+
+func (q *Queue[T]) IsEmpty() bool {
 	return len(*q) == 0
 }
 
 // deque
-type Deque []int
+type Deque[T any] []T
 
-func NewDeque() *Deque {
-	return &Deque{}
+func NewDeque[T any]() *Deque[T] {
+	return &Deque[T]{}
 }
-func (d *Deque) PushRight(v int) {
+func (d *Deque[T]) PushBack(v T) {
 	*d = append(*d, v)
 }
-func (d *Deque) PushLeft(v int) {
-	*d = append([]int{v}, *d...)
+func (d *Deque[T]) PushFront(v T) {
+	*d = append([]T{v}, *d...)
 }
-func (d *Deque) PopLeft() int {
+func (d *Deque[T]) PopFront() T {
 	old := *d
 	x := old[0]
 	*d = old[1:]
 	return x
 }
-func (d *Deque) PopRight() int {
+func (d *Deque[T]) PopBack() T {
 	old := *d
 	n := len(old)
 	x := old[n-1]
 	*d = old[:n-1]
 	return x
 }
-func (d *Deque) IsEmpty() bool {
+func (d *Deque[T]) IsEmpty() bool {
 	return len(*d) == 0
 }
 
