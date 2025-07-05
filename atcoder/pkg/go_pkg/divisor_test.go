@@ -1,28 +1,29 @@
 package gopkg
 
 import (
+	"reflect"
 	"testing"
-
-	"github.com/google/go-cmp/cmp"
 )
 
-func TestDivisor(t *testing.T) {
+func Test_divisor(t *testing.T) {
+	type args struct {
+		n int
+	}
 	tests := []struct {
 		name string
-		n    int
+		args args
 		want []int
 	}{
 		{
 			name: "10",
-			n:    10,
+			args: args{n: 10},
 			want: []int{1, 2, 5, 10},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := divisor(tt.n)
-			if diff := cmp.Diff(got, tt.want); diff != "" {
-				t.Errorf("divisor() mismatch (-got +want):\n%s", diff)
+			if got := divisor(tt.args.n); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("divisor() = %v, want %v", got, tt.want)
 			}
 		})
 	}

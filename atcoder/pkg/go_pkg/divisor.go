@@ -10,13 +10,12 @@ func divisor(n int) []int {
 	for i := 1; i*i <= n; i++ {
 		if n%i == 0 {
 			ret = append(ret, i)
+			if i != n/i {
+				ret = append(ret, n/i)
+			}
 		}
-		if i*i == n {
-			continue
-		}
-		ret = append(ret, n/i)
 	}
-	sort.Sort(sort.IntSlice(ret))
+	sort.Ints(ret)
 	return ret
 }
 
