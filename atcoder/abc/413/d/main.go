@@ -5,35 +5,86 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
 
-var sc = bufio.NewScanner(os.Stdin)
-var wtr = bufio.NewWriter(os.Stdout)
+const (
+	inf           = math.MaxInt64
+	mod1000000007 = 1000000007
+	mod998244353  = 998244353
+	mod           = mod1000000007
+)
+
+var (
+	sc  = bufio.NewScanner(os.Stdin)
+	wtr = bufio.NewWriter(os.Stdout)
+)
 
 func main() {
 	defer flush()
-	n := scanInt()
-	for i := 0; i < n; i++ {
-		a, b := scanInt2()
-		out(a + b)
+	T := scanInt()
+	for t := 0; t < T; t++ {
+		n := scanInt()
+		A := scanIntSlice(n)
+		if solve(n, A) {
+			out("Yes")
+		} else {
+			out("No")
+		}
 	}
 }
 
-// ==================================================
-// init
-// ==================================================
+func solve(n int, A []int) bool {
+	a0 := A[0]
+	// 公比が1の場合
+	rIsOne := true
+	for _, a := range A {
+		if a != a0 {
+			rIsOne = false
+			break
+		}
+	}
+	if rIsOne {
+		return true
+	}
+	// 公比が-1の場合
+	rIsMinusOne := true
+	pos := 0
+	neg := 0
+	for _, a := range A {
+		if a == a0 {
+			pos++
+		}
+		if a == -a0 {
+			neg++
+		}
+	}
+	if pos+neg != n || abs(pos-neg) > 1 {
+		rIsMinusOne = false
+	}
+	if rIsMinusOne {
+		return true
+	}
 
-const inf = math.MaxInt64
-const mod1000000007 = 1000000007
-const mod998244353 = 998244353
-const mod = mod1000000007
+	// 公比の絶対値が1より大きい場合
+	sort.Slice(A, func(i, j int) bool { return abs(A[i]) < abs(A[j]) })
+	ok := true
+	for i := 1; i < n-1; i++ {
+		if A[i]*A[i] != A[i-1]*A[i+1] {
+			ok = false
+			break
+		}
+	}
+	return ok
+}
 
 func init() {
 	sc.Buffer([]byte{}, math.MaxInt64)
 	sc.Split(bufio.ScanWords)
 
+	// inputあれば使う
 	if f, err := os.Open("./input"); err == nil {
 		sc = bufio.NewScanner(f)
 		sc.Split(bufio.ScanWords)
@@ -313,95 +364,3 @@ func (h *Heap) Pop() interface{} {
 	*h = old[:n-1]
 	return x
 }
-
-// =====================================================================================
-// stack and queue
-// =====================================================================================
-type Stack []int
-
-func NewStack() *Stack {
-	return &Stack{}
-}
-func (s *Stack) Push(v int) {
-	*s = append(*s, v)
-}
-func (s *Stack) Pop() int {
-	old := *s
-	n := len(old)
-	x := old[n-1]
-	*s = old[:n-1]
-	return x
-}
-func (s *Stack) IsEmpty() bool {
-	return len(*s) == 0
-}
-
-// queue
-type Queue []int
-
-func NewQueue() *Queue {
-	return &Queue{}
-}
-func (q *Queue) Push(v int) {
-	*q = append(*q, v)
-}
-func (q *Queue) Pop() int {
-	old := *q
-	x := old[0]
-	*q = old[1:]
-	return x
-}
-func (q *Queue) IsEmpty() bool {
-	return len(*q) == 0
-}
-
-// deque
-type Deque []int
-
-func NewDeque() *Deque {
-	return &Deque{}
-}
-func (d *Deque) PushRight(v int) {
-	*d = append(*d, v)
-}
-func (d *Deque) PushLeft(v int) {
-	*d = append([]int{v}, *d...)
-}
-func (d *Deque) PopLeft() int {
-	old := *d
-	x := old[0]
-	*d = old[1:]
-	return x
-}
-func (d *Deque) PopRight() int {
-	old := *d
-	n := len(old)
-	x := old[n-1]
-	*d = old[:n-1]
-	return x
-}
-func (d *Deque) IsEmpty() bool {
-	return len(*d) == 0
-}
-
-// =====================================================================================
-// Graph
-// =====================================================================================
-type edge struct {
-	to   int
-	cost int
-}
-type Edges []edge
-type Graph []Edges
-
-func newGraph(n int) Graph {
-	return make([]Edges, n)
-}
-
-// Edgesのcostでのsortを可能にするためのsort.interfaceを実装
-func (e Edges) Len() int           { return len(e) }
-func (e Edges) Swap(i, j int)      { e[i], e[j] = e[j], e[i] }
-func (e Edges) Less(i, j int) bool { return e[i].cost < e[j].cost }
-
-// asc: sort.Sort(graph[i])
-// desc: sort.Sort(sort.Reverse(graph[i]))

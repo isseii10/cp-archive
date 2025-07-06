@@ -7,6 +7,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/liyue201/gostl/ds/deque"
 )
 
 var sc = bufio.NewScanner(os.Stdin)
@@ -15,7 +17,7 @@ var wtr = bufio.NewWriter(os.Stdout)
 func main() {
 	defer flush()
 	q := scanInt()
-	deq := NewDeque[[2]int]()
+	deq := deque.New[[2]int]()
 	for i := 0; i < q; i++ {
 		qtype := scanInt()
 		switch qtype {
@@ -310,129 +312,3 @@ func modInv(a, m int) int {
 func modInvFermat(a, m int) int {
 	return modPow(a, m-2, mod)
 }
-
-// =====================================================================================
-// heap
-// =====================================================================================
-type Heap []int
-
-func NewHeap() *Heap {
-	return &Heap{}
-}
-func (h Heap) IsEmpty() bool {
-	return len(h) == 0
-}
-
-// heapインターフェースの実装 heap化はheap.Init(hq)
-func (h Heap) Len() int           { return len(h) }
-func (h Heap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
-func (h Heap) Less(i, j int) bool { return h[i] < h[j] }
-
-func (h *Heap) Push(e interface{}) {
-	*h = append(*h, e.(int))
-}
-func (h *Heap) Pop() interface{} {
-	old := *h
-	n := len(old)
-	x := old[n-1]
-	*h = old[:n-1]
-	return x
-}
-
-// =====================================================================================
-// stack and queue
-// =====================================================================================
-type Stack[T any] []T
-
-func NewStack[T any]() *Stack[T] {
-	return &Stack[T]{}
-}
-
-func (s *Stack[T]) Push(v T) {
-	*s = append(*s, v)
-}
-
-func (s *Stack[T]) Pop() T {
-	old := *s
-	n := len(old)
-	x := old[n-1]
-	*s = old[:n-1]
-	return x
-}
-
-func (s *Stack[T]) IsEmpty() bool {
-	return len(*s) == 0
-}
-
-// queue
-type Queue[T any] []T
-
-func NewQueue[T any]() *Queue[T] {
-	return &Queue[T]{}
-}
-
-func (q *Queue[T]) Push(v T) {
-	*q = append(*q, v)
-}
-
-func (q *Queue[T]) Pop() T {
-	old := *q
-	x := old[0]
-	*q = old[1:]
-	return x
-}
-
-func (q *Queue[T]) IsEmpty() bool {
-	return len(*q) == 0
-}
-
-// deque
-type Deque[T any] []T
-
-func NewDeque[T any]() *Deque[T] {
-	return &Deque[T]{}
-}
-func (d *Deque[T]) PushBack(v T) {
-	*d = append(*d, v)
-}
-func (d *Deque[T]) PushFront(v T) {
-	*d = append([]T{v}, *d...)
-}
-func (d *Deque[T]) PopFront() T {
-	old := *d
-	x := old[0]
-	*d = old[1:]
-	return x
-}
-func (d *Deque[T]) PopBack() T {
-	old := *d
-	n := len(old)
-	x := old[n-1]
-	*d = old[:n-1]
-	return x
-}
-func (d *Deque[T]) IsEmpty() bool {
-	return len(*d) == 0
-}
-
-// =====================================================================================
-// Graph
-// =====================================================================================
-type edge struct {
-	to   int
-	cost int
-}
-type Edges []edge
-type Graph []Edges
-
-func newGraph(n int) Graph {
-	return make([]Edges, n)
-}
-
-// Edgesのcostでのsortを可能にするためのsort.interfaceを実装
-func (e Edges) Len() int           { return len(e) }
-func (e Edges) Swap(i, j int)      { e[i], e[j] = e[j], e[i] }
-func (e Edges) Less(i, j int) bool { return e[i].cost < e[j].cost }
-
-// asc: sort.Sort(graph[i])
-// desc: sort.Sort(sort.Reverse(graph[i]))
