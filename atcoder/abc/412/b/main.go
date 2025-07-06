@@ -23,11 +23,32 @@ var (
 
 func main() {
 	defer flush()
-	// n := scanInt()
-	// for i := 0; i < n; i++ {
-	// 	a, b := scanInt2()
-	// 	out(a + b)
-	// }
+	s := scanString()
+	t := scanString()
+	ss := strings.Split(s, "")
+	tt := strings.Split(t, "")
+	ok := true
+	for i := 1; i < len(ss); i++ {
+		if strings.ToUpper(ss[i]) == ss[i] {
+			if !contains(tt, ss[i-1]) {
+				ok = false
+			}
+		}
+	}
+	if ok {
+		out("Yes")
+	} else {
+		out("No")
+	}
+}
+
+func contains[T comparable](s []T, e T) bool {
+	for _, se := range s {
+		if se == e {
+			return true
+		}
+	}
+	return false
 }
 
 func init() {
@@ -146,10 +167,10 @@ func outwoln(v ...any) {
 	}
 }
 
-func outSlice[T any](sl []T) {
+func outIntSlice(sl []int) {
 	r := make([]string, len(sl))
 	for i, v := range sl {
-		r[i] = fmt.Sprintf("%v", v)
+		r[i] = itoa(v)
 	}
 	out(strings.Join(r, " "))
 }

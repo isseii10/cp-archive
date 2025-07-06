@@ -35,7 +35,7 @@ func primeFactor(n int) []int {
 }
 
 // 素因数分解 return map
-func primeFactor2(n int) map[int]int {
+func primeFactorMap(n int) map[int]int {
 	ret := make(map[int]int)
 	for i := 2; i*i <= n; i++ {
 		for n%i == 0 {

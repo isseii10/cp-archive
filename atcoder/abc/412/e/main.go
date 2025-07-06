@@ -23,11 +23,62 @@ var (
 
 func main() {
 	defer flush()
-	// n := scanInt()
-	// for i := 0; i < n; i++ {
-	// 	a, b := scanInt2()
-	// 	out(a + b)
-	// }
+	L, R := scanInt2()
+
+	pfMap := primeFactorMap(L)
+	count := 1
+	increment := false
+	for i := L + 1; i <= R; i++ {
+		iPrimeFactorMap := primeFactorMap(i)
+		increment, pfMap = mergePrimeFactor(L, pfMap, iPrimeFactorMap)
+		if increment {
+			count++
+		}
+	}
+	out(count)
+}
+
+func primeFactorMap(n int) map[int]int {
+	ret := make(map[int]int)
+	for i := 2; i*i <= n; i++ {
+		for n%i == 0 {
+			_, ok := ret[i]
+			if !ok {
+				ret[i] = 0
+			}
+			ret[i]++
+			n /= i
+		}
+	}
+	if n != 1 {
+		_, ok := ret[n]
+		if !ok {
+			ret[n] = 0
+		}
+		ret[n]++
+	}
+	return ret
+}
+
+func mergePrimeFactor(L int, prevMap, newMap map[int]int) (bool, map[int]int) {
+	retMap := make(map[int]int)
+	// まずコピー
+	for k, v := range prevMap {
+		retMap[k] = v
+	}
+
+	increment := false
+	for k, v := range newMap {
+		if retMap[k] < v {
+			if math.Pow(float64(k), float64(v)) <= float64(L) {
+				retMap[k] = v
+				continue
+			}
+			retMap[k] = v
+			increment = true
+		}
+	}
+	return increment, retMap
 }
 
 func init() {
@@ -146,10 +197,10 @@ func outwoln(v ...any) {
 	}
 }
 
-func outSlice[T any](sl []T) {
+func outIntSlice(sl []int) {
 	r := make([]string, len(sl))
 	for i, v := range sl {
-		r[i] = fmt.Sprintf("%v", v)
+		r[i] = itoa(v)
 	}
 	out(strings.Join(r, " "))
 }

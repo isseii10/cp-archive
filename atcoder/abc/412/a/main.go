@@ -23,11 +23,15 @@ var (
 
 func main() {
 	defer flush()
-	// n := scanInt()
-	// for i := 0; i < n; i++ {
-	// 	a, b := scanInt2()
-	// 	out(a + b)
-	// }
+	n := scanInt()
+	achived := 0
+	for i := 0; i < n; i++ {
+		a, b := scanInt2()
+		if a < b {
+			achived++
+		}
+	}
+	out(achived)
 }
 
 func init() {
@@ -146,10 +150,10 @@ func outwoln(v ...any) {
 	}
 }
 
-func outSlice[T any](sl []T) {
+func outIntSlice(sl []int) {
 	r := make([]string, len(sl))
 	for i, v := range sl {
-		r[i] = fmt.Sprintf("%v", v)
+		r[i] = itoa(v)
 	}
 	out(strings.Join(r, " "))
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -23,11 +24,60 @@ var (
 
 func main() {
 	defer flush()
-	// n := scanInt()
-	// for i := 0; i < n; i++ {
-	// 	a, b := scanInt2()
-	// 	out(a + b)
-	// }
+	T := scanInt()
+	for t := 0; t < T; t++ {
+		n := scanInt()
+		S := scanIntSlice(n)
+		out(solve(n, S))
+	}
+}
+
+func solve(n int, S []int) int {
+	start := S[0]
+	end := S[n-1]
+	ret := 2
+	if end <= start*2 {
+		return ret
+	}
+	dominos := make([]int, n-1)
+	for i := 1; i < n-1; i++ {
+		dominos[i] = S[i]
+	}
+	sort.Ints(dominos)
+
+	now := start
+	where := 0
+	for {
+		nextWhere := bisectRight(now*2, dominos)
+		if nextWhere == where {
+			// これ以上進まない
+			return -1
+		}
+		where = nextWhere
+
+		// 使う
+		ret++
+		now = dominos[where-1]
+		if end <= now*2 {
+			// nowでendが倒せるなら終わり
+			break
+		}
+	}
+	return ret
+}
+
+func bisectRight(x int, arr []int) int {
+	l := 0
+	r := len(arr)
+	for l < r {
+		mid := (r + l) / 2
+		if arr[mid] <= x {
+			l = mid + 1
+		} else {
+			r = mid
+		}
+	}
+	return l
 }
 
 func init() {
@@ -146,10 +196,10 @@ func outwoln(v ...any) {
 	}
 }
 
-func outSlice[T any](sl []T) {
+func outIntSlice(sl []int) {
 	r := make([]string, len(sl))
 	for i, v := range sl {
-		r[i] = fmt.Sprintf("%v", v)
+		r[i] = itoa(v)
 	}
 	out(strings.Join(r, " "))
 }

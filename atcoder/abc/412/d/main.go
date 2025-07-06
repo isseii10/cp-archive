@@ -7,6 +7,10 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/liyue201/gostl/algorithm/sort"
+	"github.com/liyue201/gostl/ds/slice"
+	"github.com/liyue201/gostl/utils/comparator"
 )
 
 const (
@@ -23,11 +27,107 @@ var (
 
 func main() {
 	defer flush()
-	// n := scanInt()
-	// for i := 0; i < n; i++ {
-	// 	a, b := scanInt2()
-	// 	out(a + b)
-	// }
+	n, m := scanInt2()
+
+	edges := make([][]bool, n)
+	for i := 0; i < n; i++ {
+		edges[i] = make([]bool, n)
+		for j := 0; j < n; j++ {
+			edges[i][j] = false
+		}
+	}
+
+	for i := 0; i < m; i++ {
+		a, b := scanInt2()
+		a--
+		b--
+		edges[a][b] = true
+		edges[b][a] = true
+	}
+
+	ns := make([]int, n+1)
+	for i := 0; i < n; i++ {
+		ns[i] = i
+	}
+	ns[n] = -1 // しきり
+
+	ans := inf
+	nodes := slice.NewSliceWrapper(ns)
+	ok := true
+	for ok {
+		// edgeをコピーする
+		copiedEdges := make([][]bool, n)
+		for i := 0; i < n; i++ {
+			copiedEdges[i] = make([]bool, n)
+			for j := 0; j < n; j++ {
+				copiedEdges[i][j] = edges[i][j]
+			}
+		}
+		ans = min(ans, solve(n, nodes, copiedEdges))
+		ok = sort.NextPermutation[int](nodes.Begin(), nodes.End(), comparator.IntComparator)
+	}
+	out(ans)
+}
+
+func solve(n int, nodes *slice.SliceWrapper[int], edges [][]bool) int {
+	// 仕切りの場所探して分ける
+	A := make([]int, 0, n)
+	B := make([]int, 0, n)
+	found := false
+	for i := 0; i < nodes.Len(); i++ {
+		if nodes.At(i) == -1 {
+			found = true
+			continue
+		}
+		if found {
+			A = append(A, nodes.At(i))
+		} else {
+			B = append(B, nodes.At(i))
+		}
+	}
+
+	if len(A) != 0 && len(A) < 3 {
+		return inf
+	}
+	if len(B) != 0 && len(B) < 3 {
+		return inf
+	}
+
+	ret := 0
+	for _, nodeGroup := range [][]int{A, B} {
+		if len(nodeGroup) == 0 {
+			continue
+		}
+		for i := 0; i < len(nodeGroup); i++ {
+			prev := nodeGroup[(i-1+len(nodeGroup))%len(nodeGroup)]
+			now := nodeGroup[i]
+			next := nodeGroup[(i+1)%len(nodeGroup)]
+			for j := 0; j < n; j++ { // ここは全てのノードで回す
+				if j == now {
+					continue
+				}
+
+				if edges[now][j] {
+					if j == prev || j == next {
+						continue
+					}
+					// 余計なところに繋がっているので削除
+					ret++
+					edges[now][j] = false
+					edges[j][now] = false
+				} else {
+					if j != prev && j != next {
+						continue
+					}
+					// prev/nextに繋がっていないので追加
+					ret++
+					edges[now][j] = true
+					edges[j][now] = true
+				}
+			}
+		}
+	}
+	return ret
 }
 
 func init() {
@@ -146,10 +246,10 @@ func outwoln(v ...any) {
 	}
 }
 
-func outSlice[T any](sl []T) {
+func outIntSlice(sl []int) {
 	r := make([]string, len(sl))
 	for i, v := range sl {
-		r[i] = fmt.Sprintf("%v", v)
+		r[i] = itoa(v)
 	}
 	out(strings.Join(r, " "))
 }
