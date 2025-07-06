@@ -23,11 +23,34 @@ var (
 
 func main() {
 	defer flush()
-	n := scanInt()
-	for i := 0; i < n; i++ {
-		a, b := scanInt2()
-		out(a + b)
+	T := scanInt()
+	for i := 0; i < T; i++ {
+		n := scanInt()
+		P := scanIntSlice(int(math.Pow(2, float64(n))))
+		ans := solve(n, P)
+		outSlice(ans)
 	}
+}
+
+func solve(n int, P []int) []int {
+	for i := 0; i < n; i++ {
+		size := int(math.Pow(2, float64(i)))
+		for j := 0; j < len(P); j += size * 2 {
+			aLeft, aRight := P[j], P[j+size-1]
+			bLeft, bRight := P[j+size], P[j+size*2-1]
+			_ = aRight
+			_ = bRight
+			// ALeftとBLeftは同じ値になることはない
+			if aLeft > bLeft {
+				// swap
+				for k := 0; k < size; k++ {
+					P[j+k], P[j+size+k] = P[j+size+k], P[j+k]
+				}
+			}
+		}
+	}
+
+	return P
 }
 
 func init() {
@@ -144,10 +167,10 @@ func outwoln(v ...any) {
 	}
 }
 
-func outIntSlice(sl []int) {
+func outSlice[T any](sl []T) {
 	r := make([]string, len(sl))
 	for i, v := range sl {
-		r[i] = itoa(v)
+		r[i] = fmt.Sprintf("%v", v)
 	}
 	out(strings.Join(r, " "))
 }
