@@ -1,3 +1,12 @@
+// -*- coding:utf-8-unix -*-
+
+use proconio::{input, marker::Chars};
+
 fn main() {
-    todo!();
+    input! {
+        n: usize,
+        q: usize,
+        s: Chars,
+        queries: [(usize, usize); q],
+    }
 }
