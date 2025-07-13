@@ -25,6 +25,41 @@ type Heap<T> = BinaryHeap<T>;
 fn main() {
     input! {
         n: usize,
-        a: [usize; n],
+        mut a: [usize; n],
+        b: [usize; n],
     }
+    let m = 998244353;
+    let mut indices: Vec<usize> = (0..n).collect();
+    indices.sort_by_key(|&i| a[i]);
+
+    let aa: Vec<usize> = indices.iter().map(|&i| a[i]).collect();
+    let bb: Vec<usize> = indices.iter().map(|&i| b[i]).collect();
+
+    // dp[i][s]: i番目まで見て、0<=j<=iの中からB_jを選び、B_jの和がsになる場合の数
+    let mut dp: Vec<Vec<usize>> = vec![vec![0; 5050]; n + 1];
+    dp[0][0] = 1;
+
+    for i in 0..n {
+        for s in 0..=5000 {
+            // 選ぶ
+            if s + bb[i] <= 5000 {
+                dp[i + 1][s + bb[i]] += dp[i][s];
+                dp[i + 1][s + bb[i]] %= m;
+            }
+            // 選ばない
+            dp[i + 1][s] += dp[i][s];
+        }
+    }
+
+    let mut ans = 0;
+    for i in 0..n {
+        if aa[i] < bb[i] {
+            continue;
+        }
+        for s in 0..=aa[i] - bb[i] {
+            ans += dp[i][s];
+            ans %= m;
+        }
+    }
+    println!("{}", ans);
 }
