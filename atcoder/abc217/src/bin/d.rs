@@ -34,6 +34,7 @@ fn main() {
     let mut cut_indices = BTreeSet::new();
     cut_indices.push(0);
     cut_indices.push(l);
+    let mut v = Vec::new().iter().enumerate().rev()
     for (c, x) in cx {
         if c == 1 {
             cut_indices.push(x);
