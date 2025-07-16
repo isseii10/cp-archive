@@ -1,5 +1,3 @@
-use amplify::confinement::Collection;
-use petgraph::graph;
 #[allow(unused_imports)]
 use proconio::{input, marker::Chars};
 #[allow(unused_imports)]
@@ -30,7 +28,7 @@ fn main() {
         m: usize,
         k: usize,
         abd: [(usize, usize, usize); m],
-        ct: [(usize, usize); k],
+        mut ct: [(usize, usize); k],
     }
     // 最短経路の準備
     let mut graph = vec![vec![]; n];
@@ -48,36 +46,59 @@ fn main() {
     }
 
     // イベントの準備
-    let mut events_on = vec![vec![]; n];
-    for (c, t) in ct {
-        events_on[c-1].push(t);
-    }
+    ct.push((1, 0));
+    ct.sort_by(|(_, t1), (_, t2)| t1.cmp(t2));
 
+    // // dp[i]: i番目のイベントに参加した場合の、参加イベントの最大値
+    // let mut dp = vec![MIN; k + 1];
+    // dp[0] = 0;
+    //
+    // for i in 0..k {
+    //     let (mut c, t) = ct[i];
+    //     c -= 1;
+    //     for j in i + 1..k + 1 {
+    //         let (mut nc, nt) = ct[j];
+    //         nc -= 1;
+    //         if dist[c][nc] < nt - t {
+    //             dp[j] = max(dp[j], dp[i] + 1);
+    //         }
+    //     }
+    // }
+    // let ans = dp.iter().max().unwrap();
 
-
-    // dp[i][j]: j個のイベントに参加してきて、今iにいる時の時間
-    let mut dp = vec![vec![MAX; k+1]; n+1]
+    // dp[i][j]: i番目のイベントまで見て、j番目を最後に参加したときの最大参加数
+    let mut dp = vec![vec![MIN; k + 1]; k + 1];
     dp[0][0] = 0;
 
-    for i in 0..n {
-        for j in 0..k {
-            // iにいるので、iで起きるイベントを取るか取らないか
-            dp[i]
+    for i in 0..k {
+        for last in 0..=i {
+            if dp[i][last] == MIN {
+                continue;
+            }
+            // 次のイベントに参加しない場合
+            dp[i + 1][last] = max(dp[i + 1][last], dp[i][last]);
 
+            let (mut c1, t1) = ct[last];
+            let (mut c2, t2) = ct[i + 1];
+            c1 -= 1;
+            c2 -= 1;
+
+            // 間に合う場合は参加できる
+            if dist[c1][c2] < t2 - t1 {
+                dp[i + 1][i + 1] = max(dp[i + 1][i + 1], dp[i][last] + 1);
+            }
         }
     }
 
-
-
-
-
+    let ans = dp[k].iter().max().unwrap();
+    println!("{}", ans)
 }
 
 fn bfs(n: usize, graph: &Vec<Vec<(usize, usize)>>, start: usize) -> Vec<usize> {
     let mut dist = vec![MAX; n];
     dist[start] = 0;
     let mut queue = Deque::new();
-    queue.push(start);
+    queue.push_back(start);
     while !queue.is_empty() {
         let p = queue.pop_front().unwrap();
         for &(c, d) in graph[p].iter() {
