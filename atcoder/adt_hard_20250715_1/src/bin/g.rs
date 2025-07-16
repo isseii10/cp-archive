@@ -72,9 +72,9 @@ fn main() {
 
     for i in 0..k {
         for last in 0..=i {
-            if dp[i][last] == MIN {
-                continue;
-            }
+            // if dp[i][last] == MIN {
+            //     continue;
+            // }
             // 次のイベントに参加しない場合
             dp[i + 1][last] = max(dp[i + 1][last], dp[i][last]);
 

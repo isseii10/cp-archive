@@ -35,31 +35,32 @@ fn main() {
     let aa: Vec<usize> = indices.iter().map(|&i| a[i]).collect();
     let bb: Vec<usize> = indices.iter().map(|&i| b[i]).collect();
 
-    // dp[i][s]: i番目まで見て、0<=j<=iの中からB_jを選び、B_jの和がsになる場合の数
-    let mut dp: Vec<Vec<usize>> = vec![vec![0; 5050]; n + 1];
+    // dp[i][j]: i番目までの要素を使って、総和がjになる時の場合の数
+    let mut dp = vec![vec![0; 5050]; n + 1];
     dp[0][0] = 1;
 
     for i in 0..n {
-        for s in 0..=5000 {
-            // 選ぶ
-            if s + bb[i] <= 5000 {
-                dp[i + 1][s + bb[i]] += dp[i][s];
-                dp[i + 1][s + bb[i]] %= m;
+        for j in 0..=5000 {
+            // bb[i]を使う場合
+            if bb[i] + j <= 5000 {
+                dp[i + 1][bb[i] + j] += dp[i][j];
+                dp[i + 1][bb[i] + j] %= m;
             }
-            // 選ばない
-            dp[i + 1][s] += dp[i][s];
+            // bb[i]を使わない場合
+            dp[i + 1][j] += dp[i][j];
+            dp[i + 1][j] %= m;
         }
     }
 
     let mut ans = 0;
     for i in 0..n {
-        if aa[i] < bb[i] {
-            continue;
-        }
-        for s in 0..=aa[i] - bb[i] {
-            ans += dp[i][s];
-            ans %= m;
+        for j in 0..=5000 {
+            if j + bb[i] <= aa[i] {
+                ans += dp[i][j];
+                ans %= m;
+            }
         }
     }
+
     println!("{}", ans);
 }
