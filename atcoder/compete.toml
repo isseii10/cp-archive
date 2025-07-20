@@ -45,6 +45,8 @@ type Set<T> = HashSet<T>;
 type Deque<T> = VecDeque<T>;
 #[allow(dead_code)]
 type Heap<T> = BinaryHeap<T>;
+#[allow(dead_code)]
+type Mint = ac_library::ModInt998244353;
 
 fn main() {
     input! {
