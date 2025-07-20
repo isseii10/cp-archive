@@ -43,28 +43,25 @@ fn solve() -> bool {
     // 貪欲法
     // rの小さい順に見ていきたい。(後続の処理に可能性を多く残せるため)
     lr.sort();
-    lr.push((MAX, MAX));
-    let mut curr_box = 1;
-    // candidate_balls: 今見ている箱に入れることができるボール。
+    lr.push((MAX, MAX)); // 番兵
+    let mut curr = 1;
+    // candidates: 今見ている箱に入れることができるボール。
     // つまり、l <= 今見ている箱 を満たしているボール。
     // 候補の中でrが最小のものを選んで今見ている箱に詰めていく貪欲法をしたいので、rをheapで管理する。
-    let mut candidate_balls: BinaryHeap<Reverse<usize>> = Heap::new();
+    let mut candidates = Heap::new();
+
     for (l, r) in lr {
-        // l <= curr_box の場合は今見ている区間も候補に入る。候補がまだ出揃っていないので詰める処理(whileの中)に入ることはできない。
-        while curr_box < l && !candidate_balls.is_empty() {
-            // 候補が出揃ったなら、貪欲に詰めていく
-            let candidate_ball_r = candidate_balls.pop().unwrap().0;
-            if candidate_ball_r < curr_box {
-                // 詰めようとしたが、今見ている箱がすでに範囲外になってしまっているなら、もうだめ
+        // 今の箱位置 curr が次の l に到達するまで、
+        // 候補から詰められるだけ詰める
+        while curr < l && !candidates.is_empty() {
+            let Reverse(candidate_r) = candidates.pop().unwrap();
+            if candidate_r < curr {
                 return false;
             }
-
-            // 今見ている箱に詰めたので次の箱へ
-            curr_box += 1;
+            curr += 1;
         }
-        // lまで飛ばす。つまり今見ている区間[l, r]はcandidateに入る
-        curr_box = l;
-        candidate_balls.push(Reverse(r));
+        curr = l;
+        candidates.push(Reverse(r));
     }
     true
 }
