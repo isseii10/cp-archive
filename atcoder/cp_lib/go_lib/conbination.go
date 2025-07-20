@@ -1,4 +1,4 @@
-package gopkg
+package golib
 
 const mod = 100000007
 

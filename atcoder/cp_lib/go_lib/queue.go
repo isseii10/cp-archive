@@ -1,4 +1,4 @@
-package gopkg
+package golib
 
 type Queue[T any] []T
 

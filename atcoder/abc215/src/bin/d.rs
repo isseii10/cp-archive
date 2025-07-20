@@ -1,4 +1,3 @@
-use amplify::confinement::Collection;
 #[allow(unused_imports)]
 use proconio::{input, marker::Chars};
 #[allow(unused_imports)]
@@ -29,66 +28,68 @@ fn main() {
         m: usize,
         a: [usize; n],
     }
-    let primes = eratosthenes(100_001);
-    let mut prime_factors = Set::new();
-    for e in a {
-        for pf in prime_factorize(e, &primes) {
-            prime_factors.push(pf);
-        }
-    }
-    let mut ans = vec![];
-    ans.push(1);
-    for i in 2..=m {
-        let pf = prime_factorize(i, &primes);
-        let mut ok = true;
-        for p in pf {
-            if prime_factors.contains(&p) {
-                ok = false;
-                break;
+    let (_, min_factor) = eratosthenes(100_001);
+    let mut sieve = vec![true; 100_001];
+    for v in a {
+        for (p, _) in fast_prime_factorize(v, &min_factor) {
+            if sieve[p] {
+                let mut q = p;
+                while q <= m {
+                    sieve[q] = false;
+                    q += p;
+                }
             }
         }
-        if ok {
-            ans.push(i);
-        }
     }
+    let ans: Vec<usize> = (1..=m).filter(|&x| sieve[x]).collect();
     println!("{}", ans.len());
     for a in ans {
         println!("{}", a)
     }
 }
 
-fn eratosthenes(n: usize) -> Vec<usize> {
+// エラトステネスの篩 O(nloglogn)
+// 定数倍改善1: pのforは2..=sqrt(n)で良い
+// 定数倍改善2: qのforはp*p..=nで良い
+// NOTE: 以下は基本形からmin_factorも返すように修正。
+// 素数判定の過程で応用が効くので、このコードに手を加えて利用することもあるかも
+fn eratosthenes(n: usize) -> (Vec<usize>, Vec<usize>) {
     let mut is_prime = vec![true; n + 1];
+    let mut min_factor = vec![0; n + 1]; // 最小素因数
+
     is_prime[0] = false;
     is_prime[1] = false;
+    min_factor[1] = 1; // 1は素数ではないが、最小素因数を1にしておく
+
     for p in 2..=n {
         if !is_prime[p] {
             continue;
         }
+        min_factor[p] = p;
         // pが素数なので、2*pからふるいおとしていく
         for q in (p * 2..=n).step_by(p) {
             is_prime[q] = false;
+            if min_factor[q] == 0 {
+                min_factor[q] = p;
+            }
         }
     }
-    (0..=n).filter(|&x| is_prime[x]).collect()
+    let primes = (0..=n).filter(|&x| is_prime[x]).collect();
+    (primes, min_factor)
 }
 
-fn prime_factorize(mut n: usize, primes: &[usize]) -> Vec<usize> {
-    let mut factors = Vec::new();
-
-    for &p in primes {
-        if p * p > n {
-            break;
-        }
-        while n % p == 0 {
-            factors.push(p);
+// 素因数分解 素因数とその指数をタプルで返す
+// NOTE: 事前にエラトステネスの篩でmin_factorを取得する
+fn fast_prime_factorize(mut n: usize, min_factor: &[usize]) -> Vec<(usize, usize)> {
+    let mut res = vec![];
+    while n > 1 {
+        let p = min_factor[n];
+        let mut exp = 0;
+        while min_factor[n] == p {
             n /= p;
+            exp += 1;
         }
+        res.push((p, exp));
     }
-
-    if n > 1 {
-        factors.push(n);
-    }
-
-    factors
+    res
 }

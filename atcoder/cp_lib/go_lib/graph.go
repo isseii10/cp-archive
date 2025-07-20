@@ -1,4 +1,4 @@
-package gopkg
+package golib
 
 type edge struct {
 	to   int

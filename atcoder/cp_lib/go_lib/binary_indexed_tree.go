@@ -1,4 +1,4 @@
-package gopkg
+package golib
 
 type BinaryIndexedTree struct {
 	bit []int

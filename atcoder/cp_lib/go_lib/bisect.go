@@ -1,4 +1,4 @@
-package gopkg
+package golib
 
 func bisectLeft(x int, arr []int) int {
 	l := 0
