@@ -30,39 +30,38 @@ fn main() {
         n: usize,
         s: Chars,
     }
-    let pow2_10 = pow(2, 10);
+    let pow2_10 = 1 << 10;
 
     // dp[i][j][k]: i番目まで見て、j(選んだコンテストの英字をbitで管理)のコンテストに出て、選んだ最後のコンテストがkの時の場合の数
-    let mut dp = vec![vec![vec![Mint::new(0); 10]; pow(2, 10)]; n + 1];
-    dp[0][0][0] = Mint::new(1);
+    let mut dp = vec![vec![vec![Mint::new(0); 10]; pow2_10]; n + 1];
 
     let contests: Vec<usize> = s.iter().map(|&x| (x as u8 - b'A') as usize).collect();
 
     for i in 0..n {
-        let now_c = contests[i];
+        let next = contests[i];
 
-        // 初出場
-        dp[i + 1][1 << now_c][now_c] += 1;
+        // 初回の出場
+        dp[i + 1][1 << next][next] += 1;
 
         for j in 0..pow2_10 {
-            for last_c in 0..10 {
-                if (j >> last_c) & 1 == 0 {
-                    // last_cに出場しているのにjにlast_cが含まれていない場合はありえない
+            for last in 0..10 {
+                if (j >> last) & 1 == 0 {
+                    // lastに出場しているのにjにlastが含まれていない場合はありえない
                     continue;
                 }
-                // now_cに出場しない
-                dp[i + 1][j][last_c] = dp[i + 1][j][last_c] + dp[i][j][last_c];
 
-                // now_cに出場する
-                if now_c == last_c {
-                    // 出場する1: 最後のコンテストが同じなら出場できる
-                    dp[i + 1][j][now_c] = dp[i + 1][j][now_c] + dp[i][j][last_c];
+                // nextに出場しない
+                dp[i + 1][j][last] = dp[i + 1][j][last] + dp[i][j][last];
+
+                // nextに出場する
+                // 出場する1: 最後のコンテストが同じなら出場できる
+                // 出場する2: 最後のコンテストとは異なるが、まだ出たことない種類のコンテストだから出場できる
+                // つまり、出場できる条件は next == last || (j >> next) & 1 == 0
+                if next != last && (j >> next) & 1 == 1 {
+                    continue;
                 }
-                if now_c != last_c && (j >> now_c) & 1 == 0 {
-                    // 選ぶ2: 最後のコンテストとは異なるが、まだ出たことない種類のコンテストだから出場できる
-                    dp[i + 1][j | (1 << now_c)][now_c] =
-                        dp[i + 1][j | (1 << now_c)][now_c] + dp[i][j][last_c]
-                }
+                dp[i + 1][j | (1 << next)][next] =
+                    dp[i + 1][j | (1 << next)][next] + dp[i][j][last];
             }
         }
     }
