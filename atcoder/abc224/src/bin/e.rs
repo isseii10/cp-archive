@@ -26,7 +26,37 @@ type Mint = ac_library::ModInt998244353;
 
 fn main() {
     input! {
+        h: usize,
+        w: usize,
         n: usize,
-        a: [usize; n],
+        rca: [(usize, usize, usize); n],
+    }
+    let mut arci = BTreeMap::<Reverse<usize>, Vec<(usize, usize, usize)>>::new();
+
+    for (i, &(r, c, a)) in rca.iter().enumerate() {
+        if let Some(v) = arci.get_mut(&Reverse(a)) {
+            v.push((r - 1, c - 1, i));
+        } else {
+            arci.insert(Reverse(a), vec![(r - 1, c - 1, i)]);
+        }
+    }
+
+    let mut h_max = vec![-1; h];
+    let mut w_max = vec![-1; w];
+
+    let mut ans = vec![0; n];
+
+    for (_, v) in arci.iter() {
+        for &(r, c, i) in v.iter() {
+            ans[i] = max(h_max[r], w_max[c]) + 1;
+        }
+        for &(r, c, i) in v.iter() {
+            h_max[r] = h_max[r].max(ans[i]);
+            w_max[c] = w_max[c].max(ans[i]);
+        }
+    }
+
+    for v in ans {
+        println!("{}", v);
     }
 }
