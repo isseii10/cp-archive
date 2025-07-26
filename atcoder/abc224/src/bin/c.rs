@@ -27,6 +27,23 @@ type Mint = ac_library::ModInt998244353;
 fn main() {
     input! {
         n: usize,
-        a: [usize; n],
+        xy: [(isize, isize); n],
     }
+    let mut cnt = 0;
+    for i in 0..n - 2 {
+        let (x1, y1) = xy[i];
+        for j in i + 1..n - 1 {
+            let (x2, y2) = xy[j];
+            for k in j + 1..n {
+                let (x3, y3) = xy[k];
+                cnt += if (y3 - y1) * (x2 - x1) == (y2 - y1) * (x3 - x1) {
+                    1
+                } else {
+                    0
+                };
+            }
+        }
+    }
+    let ans = n * (n - 1) * (n - 2) / 6 - cnt;
+    println!("{}", ans)
 }
