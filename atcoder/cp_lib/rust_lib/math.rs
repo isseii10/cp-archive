@@ -86,7 +86,7 @@ fn prime_factorize(mut n: usize, primes: &[usize]) -> Vec<(usize, usize)> {
 // 最大公約数を求めるユークリッドの互除法 O(log(min(a, b)))
 fn gcd(a: usize, b: usize) -> usize {
     if b == 0 {
-        a
+        return a;
     }
     gcd(b, a % b)
 }
