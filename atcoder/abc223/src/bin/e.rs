@@ -1,5 +1,3 @@
-use amplify::confinement::Collection;
-use itertools::Itertools;
 #[allow(unused_imports)]
 use proconio::{input, marker::Chars};
 #[allow(unused_imports)]
@@ -28,98 +26,34 @@ type Mint = ac_library::ModInt998244353;
 
 fn main() {
     input! {
-        m: usize,
-        uv: [(usize, usize); m],
-        mut p: [usize; 8],
+        x: usize,
+        y: usize,
+        abc: [usize; 3],
     }
-    // 空頂点にコマ9を置く
-    let mut empty_node = 0;
-    let mut p2 = p.clone();
-    p2.sort();
-    for i in 0..7 {
-        if p2[i] + 1 != p2[i + 1] {
-            empty_node = p2[i] + 1;
+    let mut ok = false;
+    for i in 0..3 {
+        let a = abc[i];
+        // b, cは順不同
+        let b = abc[(i + 1) % 3];
+        let c = abc[(i + 2) % 3];
+
+        // y軸いっぱいにaを広げた時、消費するx軸の幅: ax
+        let ax = (a + y - 1) / y;
+        // x軸いっぱいにaを広げた時、消費するy軸の幅: ay
+        let ay = (a + x - 1) / x;
+        if x.saturating_sub(ax) > 0 {
+            // a|b|cのパターンとa|b/cのパターン
+            ok = ok || is_ok(x - ax, y, b, c) || is_ok(y, x - ax, b, c);
+        }
+        if y.saturating_sub(ay) > 0 {
+            // a|b|cのパターンとa|b/cのパターン
+            ok = ok || is_ok(x, y - ay, b, c) || is_ok(y - ay, x, b, c);
         }
     }
-    p.push(empty_node);
-    // 0-indexedにする
-    for i in 0..9 {
-        p[i] -= 1
-    }
-
-    // [0, 1, ..., 8]の順列に対して状態番号を割り当てる
-    let mut to_state = Map::new();
-    let mut to_state_idx = Map::new();
-
-    let mut state = (0..9).collect_vec();
-    let mut ok = true;
-    let mut state_idx = 0;
-    while ok {
-        to_state.push((state_idx, state.clone()));
-        to_state_idx.push((state.clone(), state_idx));
-        state_idx += 1;
-        ok = next_permutation(&mut state);
-    }
-    let mut graph = vec![vec![]; 10];
-    for &(u, v) in uv.iter() {
-        graph[u - 1].push(v - 1);
-        graph[v - 1].push(u - 1);
-    }
-    let mut dist = vec![MAX; state_idx];
-    dist[to_state_idx[&p]] = 0;
-    dfs(state_idx, &graph, &mut dist, &p, p[8], &to_state_idx);
-
-    let ans = dist[to_state_idx[&p]];
-    if ans == MAX {
-        println!("-1");
-    } else {
-        println!("{}", ans);
-    }
+    println!("{}", if ok { "Yes" } else { "No" });
 }
 
-fn dfs(
-    n: usize,
-    graph: &Vec<Vec<usize>>,
-    dist: &mut Vec<usize>,
-    curr_state: &Vec<usize>,
-    curr: usize,
-    to_state_idx: &Map<Vec<usize>, usize>,
-) {
-    for &next in graph[curr].iter() {
-        let mut next_state = curr_state.clone();
-        next_state.swap(curr, next);
-        if dist[to_state_idx[&next_state]] <= dist[to_state_idx[curr_state]] + 1 {
-            continue;
-        }
-        dist[to_state_idx[&next_state]] = dist[to_state_idx[curr_state]] + 1;
-        dfs(n, graph, dist, &next_state, next, to_state_idx);
-    }
-}
-
-fn next_permutation<T: Ord>(a: &mut [T]) -> bool {
-    let n = a.len();
-    if n < 2 {
-        return false;
-    }
-
-    let mut i = n - 2;
-    while i != usize::MAX && a[i] >= a[i + 1] {
-        if i == 0 {
-            break;
-        }
-        i -= 1;
-    }
-
-    if i == 0 && a[0] >= a[1] {
-        return false;
-    }
-
-    let mut j = n - 1;
-    while a[j] <= a[i] {
-        j -= 1;
-    }
-
-    a.swap(i, j);
-    a[i + 1..].reverse();
-    true
+// y軸いっぱいにb, cを広げたとき、xに収まるか
+fn is_ok(x: usize, y: usize, b: usize, c: usize) -> bool {
+    (b + y - 1) / y + (c + y - 1) / y <= x
 }
