@@ -94,3 +94,19 @@ fn gcd(a: usize, b: usize) -> usize {
 fn lcm(a: usize, b: usize) -> usize {
     a / gcd(a, b) * b
 }
+// 繰り返し二乗法
+// b^e mod m を計算する
+// O(log e) (e<=10^18程度なら間に合う)
+fn mod_pow(base: usize, exp: usize, modulus: usize) -> usize {
+    let mut result = 1;
+    let mut b = base % modulus;
+    let mut e = exp;
+    while e > 0 {
+        if e % 2 == 1 {
+            result = (result * b) % modulus;
+        }
+        b = (b * b) % modulus;
+        e /= 2;
+    }
+    result
+}
