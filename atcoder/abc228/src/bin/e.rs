@@ -25,7 +25,7 @@ type Deque<T> = VecDeque<T>;
 #[allow(dead_code)]
 type Heap<T> = BinaryHeap<T>;
 #[allow(dead_code)]
-type Mint = ac_library::ModInt;
+type Mint = ac_library::ModInt998244353;
 #[allow(dead_code)]
 const MOD: usize = 998_244_353;
 // const MOD: usize = 1_000_000_007;
@@ -49,15 +49,18 @@ fn main() {
     // a^(p-1) ≡ 1 (mod p)
     // n^k=eとして、 e = q*(p-1)+rとすると、m^e = m^(q*(p-1)+r) ≡ m^r (mod p)
     ModInt::set_modulus(998244353 - 1);
+
     // NG
-    // 指数を先にmod計算すると成り立たない
-    // (a ≡ b (mod m)だからといって、x^a ≡ x^b (mod m)とは限らない)
     // let r = ModInt::new(n);
     // let kn = ModInt::new(k).pow(r.val() as u64);
+    // ここでの問題点は、K^N を計算する際の指数である N を、ModInt::new(n) によって先に mod (998244353 - 1) で計算してしまっている点です。
+    // 指数法則では、 a^b mod m は a^(b mod m) mod m とは一般的に等しくありません。
+    // 正しくは、a を底とする累乗 a^b の結果を m で割った余りを求める必要があります。
+
     // OK
     let kn = ModInt::new(k).pow(n as u64);
-    ModInt::set_modulus(998244353);
-    println!("{}", ModInt::new(m).pow(kn.val() as u64));
+
+    println!("{}", Mint::new(m).pow(kn.val() as u64));
 }
 
 // 繰り返し二乗法
