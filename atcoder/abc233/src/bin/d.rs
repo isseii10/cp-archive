@@ -32,22 +32,19 @@ fn main() {
         k: isize,
         a: [isize; n],
     }
+    let mut sa = vec![0; n + 1];
+    for i in 0..n {
+        sa[i + 1] = sa[i] + a[i];
+    }
     let mut ans = 0;
-
-    let mut r = 0;
-    let mut s = 0;
-    for l in 0..n {
-        while r < n && s != k {
-            s += a[r];
-            r += 1;
+    let mut map: Map<isize, usize> = Map::new();
+    map.insert(0, 1);
+    for r in 1..=n {
+        let v = sa[r] - k;
+        if let Some(&cnt) = map.get(&v) {
+            ans += cnt;
         }
-        if s == k {
-            ans += 1;
-        }
-        s -= a[l];
-        if l == r {
-            r += 1;
-        }
+        map.insert(sa[r], map.get(&sa[r]).unwrap_or(&0) + 1);
     }
     println!("{}", ans);
 }
