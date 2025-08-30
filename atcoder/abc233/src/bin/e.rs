@@ -28,7 +28,26 @@ type Mint = ac_library::ModInt998244353;
 
 fn main() {
     input! {
-        n: usize,
-        a: [usize; n],
+        mut x: Chars,
     }
+    let mut disit_sum = 0;
+    for i in 0..x.len() {
+        disit_sum += (x[i] as u8 - b'0') as usize;
+    }
+    let mut disits = vec!['0'; x.len()];
+    let mut carried = 0;
+    for i in (0..x.len()).rev() {
+        let mut d = disit_sum + carried;
+        disits[i] = char::from_digit((d % 10) as u32, 10).unwrap();
+        d /= 10;
+        carried = d;
+        disit_sum -= (x[i] as u8 - b'0') as usize;
+    }
+    let prefix = if carried > 0 {
+        carried.to_string()
+    } else {
+        String::new()
+    };
+
+    println!("{}", prefix + disits.iter().collect::<String>().as_str());
 }
