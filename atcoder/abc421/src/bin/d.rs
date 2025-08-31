@@ -30,7 +30,7 @@ fn main() {
     input! {
         rc1: (i64, i64),
         rc2: (i64, i64),
-        n: usize,
+        _n: usize,
         m: usize,
         l: usize,
         mut sa: [(char, i64); m],
