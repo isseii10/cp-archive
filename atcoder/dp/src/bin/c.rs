@@ -29,6 +29,16 @@ type Mint = ac_library::ModInt998244353;
 fn main() {
     input! {
         n: usize,
-        a: [usize; n],
+        abc: [(usize, usize, usize); n],
     }
+    let mut dp = vec![vec![0; 3]; n + 1];
+    for (i, &(a, b, c)) in abc.iter().enumerate() {
+        for j in 0..3 {
+            let v = dp[i][j];
+            let w = vec![a, b, c];
+            dp[i + 1][(j + 1) % 3] = max(dp[i + 1][(j + 1) % 3], v + w[(j + 1) % 3]);
+            dp[i + 1][(j + 2) % 3] = max(dp[i + 1][(j + 2) % 3], v + w[(j + 2) % 3]);
+        }
+    }
+    println!("{}", dp[n].iter().max().unwrap());
 }

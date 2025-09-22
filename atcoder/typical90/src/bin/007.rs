@@ -1,5 +1,6 @@
 #[allow(unused_imports)]
 use amplify::confinement::Collection;
+use num::abs;
 #[allow(unused_imports)]
 use proconio::{input, marker::Chars};
 #[allow(unused_imports)]
@@ -29,6 +30,21 @@ type Mint = ac_library::ModInt998244353;
 fn main() {
     input! {
         n: usize,
-        a: [usize; n],
+        mut a: [i64; n],
+        q: usize,
+        b: [i64; q],
+    }
+    a.sort();
+    a.dedup();
+    for &bi in b.iter() {
+        let idx = a.partition_point(|&ai| ai < bi);
+        if idx == a.len() {
+            println!("{}", bi - a[a.len() - 1]);
+        } else {
+            let idx2 = idx.saturating_sub(1);
+            // println!("idx1:{}, bi:{}, a[idx]:{}", idx, bi, a[idx]);
+            // println!("idx2:{}, bi:{}, a[idx2]:{}", idx2, bi, a[idx2]);
+            println!("{}", min(abs(bi - a[idx]), abs(bi - a[idx2])));
+        }
     }
 }

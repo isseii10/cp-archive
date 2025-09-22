@@ -29,6 +29,19 @@ type Mint = ac_library::ModInt998244353;
 fn main() {
     input! {
         n: usize,
-        a: [usize; n],
+        h: [i64; n],
     }
+    // dp[i]:= i番目の足場にいる時の最小コスト
+    let inf: i64 = 1_000_000_000_000_000_000;
+    let mut dp = vec![inf; n];
+    dp[0] = 0;
+    for i in 0..n {
+        if i + 1 < n {
+            dp[i + 1] = min(dp[i + 1], dp[i] + (h[i] - h[i + 1]).abs());
+        }
+        if i + 2 < n {
+            dp[i + 2] = min(dp[i + 2], dp[i] + (h[i] - h[i + 2]).abs());
+        }
+    }
+    println!("{}", dp[n - 1]);
 }
