@@ -16,9 +16,9 @@ test-suite = "{{ manifest_dir }}/testcases/{{ bin_alias }}.yml"
 # Open files with the command (`jq` command that outputs `string[] | string[][]`)
 #
 # VSCode:
-#open = '[["code", "-a", .manifest_dir], ["code"] + (.paths | map([.src, .test_suite]) | flatten)]'
+# open = '[["code", "-a", .manifest_dir], ["code"] + (.paths | map([.src, .test_suite]) | flatten)]'
 # Emacs:
-#open = '["emacsclient", "-n"] + (.paths | map([.src, .test_suite]) | flatten)'
+# open = '["emacsclient", "-n"] + (.paths | map([.src, .test_suite]) | flatten)'
 
 [template]
 src = '''
@@ -49,6 +49,7 @@ type Deque<T> = VecDeque<T>;
 type Heap<T> = BinaryHeap<T>;
 #[allow(dead_code)]
 type Mint = ac_library::ModInt998244353;
+// type Mint = ac_library::ModInt1000000007;
 
 fn main() {
     input! {
@@ -64,10 +65,10 @@ edition = "2018"
 # `profile` for `Cargo.toml`.
 #
 # By setting this, you can run tests with `opt-level=3` while enabling `debug-assertions` and `overflow-checks`.
-#profile = '''
-#[dev]
-#opt-level = 3
-#'''
+# profile = '''
+# [dev]
+# opt-level = 3
+# '''
 dependencies = '''
 ac-library-rs = "=0.1.1"
 once_cell = "=1.18.0"
@@ -156,28 +157,28 @@ platform = "atcoder"
 # - `package_name`: Package name
 path = "./{{ contest }}"
 
-#[new]
-#kind = "oj-api"
-#url = "https://atcoder.jp/contests/{{ id }}"
-#path = "./{{ contest }}"
+# [new]
+# kind = "oj-api"
+# url = "https://atcoder.jp/contests/{{ id }}"
+# path = "./{{ contest }}"
 
 # for Library-Checker
-#[add]
-#url = "https://judge.yosupo.jp/problem/{{ args[0] }}"
-##is-contest = ["false"] # optional
-##target-kind = "bin" # ["bin", "example"]. default to "bin"
-#bin-name = '{{ args[0] }}'
-##bin-alias = '{{ args[0] }}' # optional
-##bin-src-path = './src/bin/{{ bin_alias }}.rs' # optional
+# [add]
+# url = "https://judge.yosupo.jp/problem/{{ args[0] }}"
+# #is-contest = ["false"] # optional
+# #target-kind = "bin" # ["bin", "example"]. default to "bin"
+# bin-name = '{{ args[0] }}'
+# #bin-alias = '{{ args[0] }}' # optional
+# #bin-src-path = './src/bin/{{ bin_alias }}.rs' # optional
 
 # for yukicoder
-#[add]
-#url = '{% case args[0] %}{% when "contest" %}https://yukicoder.me/contests/{{ args[1] }}{% when "problem" %}https://yukicoder.me/problems/no/{{ args[1] }}{% endcase %}'
-#is-contest = ["bash", "-c", '[[ $(cut -d / -f 4) == "contests" ]]'] # optional
-##target-kind = "bin" # ["bin", "example"]. default to "bin"
-#bin-name = '{% assign segments = url | split: "/" %}{{ segments[5] }}'
-##bin-alias = '{% assign segments = url | split: "/" %}{{ segments[5] }}' # optional
-##bin-src-path = './src/bin/{{ bin_alias }}.rs' # optional
+# [add]
+# url = '{% case args[0] %}{% when "contest" %}https://yukicoder.me/contests/{{ args[1] }}{% when "problem" %}https://yukicoder.me/problems/no/{{ args[1] }}{% endcase %}'
+# is-contest = ["bash", "-c", '[[ $(cut -d / -f 4) == "contests" ]]'] # optional
+# #target-kind = "bin" # ["bin", "example"]. default to "bin"
+# bin-name = '{% assign segments = url | split: "/" %}{{ segments[5] }}'
+# #bin-alias = '{% assign segments = url | split: "/" %}{{ segments[5] }}' # optional
+# #bin-src-path = './src/bin/{{ bin_alias }}.rs' # optional
 
 [test]
 # Toolchain for the test. (optional)
@@ -185,13 +186,14 @@ path = "./{{ contest }}"
 # Profile for `cargo build`. ("dev" | "release")
 #
 # Defaults to `"dev"`.
-#profile = "dev"
+# profile = "dev"
 
 [submit]
 kind = "file"
 path = "{{ src_path }}"
 language_id = "5054"
-#[submit]
-#kind = "command"
-#args = ["cargo", "equip", "--exclude-atcoder-crates", "--resolve-cfgs", "--remove", "docs", "--minify", "libs", "--rustfmt", "--check", "--bin", "{{ bin_name }}"]
-#language_id = "4050"
+# [submit]
+# kind = "command"
+# args = ["cargo", "equip", "--exclude-atcoder-crates", "--resolve-cfgs", "--remove", "docs", "--minify", "libs", "--rustfmt", "--check", "--bin", "{{ bin_name }}"]
+# language_id = "4050"
+
