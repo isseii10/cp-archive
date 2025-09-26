@@ -49,9 +49,13 @@ fn main() {
     }
 }
 
-fn topological_sort(n: usize, graph: &Vec<Vec<usize>>, deg: &mut Vec<usize>) -> Option<Vec<usize>> {
+fn topological_sort(
+    n: usize,
+    graph: &Vec<Vec<usize>>,
+    indeg: &mut Vec<usize>,
+) -> Option<Vec<usize>> {
     let mut heapq = Heap::new();
-    for (v, &d) in deg.iter().enumerate() {
+    for (v, &d) in indeg.iter().enumerate() {
         if d == 0 {
             heapq.push(Reverse(v));
         }
@@ -64,8 +68,8 @@ fn topological_sort(n: usize, graph: &Vec<Vec<usize>>, deg: &mut Vec<usize>) -> 
     while let Some(Reverse(p)) = heapq.pop() {
         order.push(p + 1);
         for &c in graph[p].iter() {
-            deg[c] -= 1;
-            if deg[c] == 0 {
+            indeg[c] -= 1;
+            if indeg[c] == 0 {
                 heapq.push(Reverse(c));
             }
         }
