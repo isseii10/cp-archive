@@ -29,6 +29,43 @@ type Mint = ac_library::ModInt998244353;
 fn main() {
     input! {
         n: usize,
-        a: [usize; n],
+        m: usize,
+        xy: [(usize, usize); m],
+    }
+    let mut g = vec![vec![]; n];
+    let mut indeg = vec![0; n];
+    let mut outdeg = vec![0; n];
+    for &(x, y) in xy.iter() {
+        g[x - 1].push(y - 1);
+        indeg[y - 1] += 1;
+        outdeg[x - 1] += 1;
+    }
+
+    // dp[i]: 頂点iから始めた時の最長パスに含まれる頂点数(最長パス+1)
+    // (頂点数にしたのは0を未定の値として使うため)
+    let mut dp = vec![0; n];
+
+    // 出次数が0の時、終点なので1
+    for (i, &d) in outdeg.iter().enumerate() {
+        if d == 0 {
+            dp[i] = 1;
+        }
+    }
+    // 有向閉路を持たないので入次数0の頂点が必ず存在し、そこから始めるのが最良
+    for (i, &d) in indeg.iter().enumerate() {
+        if d == 0 {
+            dfs(&g, &mut dp, i);
+        }
+    }
+    println!("{}", dp.iter().max().unwrap() - 1);
+}
+
+fn dfs(g: &[Vec<usize>], dp: &mut [usize], cur: usize) {
+    if dp[cur] != 0 {
+        return;
+    }
+    for &nxt in g[cur].iter() {
+        dfs(g, dp, nxt);
+        dp[cur] = max(dp[cur], dp[nxt] + 1);
     }
 }

@@ -29,6 +29,29 @@ type Mint = ac_library::ModInt998244353;
 fn main() {
     input! {
         n: usize,
-        a: [usize; n],
+        w: usize,
+        wv: [(usize, usize); n],
+    }
+    // dp[i][v] := i番目までの品物から、価値がvになるように選んだ時の重さの最小値
+    let m = 100010;
+    let inf = w + 1;
+    let mut dp = vec![vec![inf; m]; n + 1];
+    dp[0][0] = 0;
+    for i in 0..n {
+        let (ww, vv) = wv[i];
+        for v in 0..m {
+            // 選ぶ
+            if dp[i][v] + ww <= w {
+                dp[i + 1][v + vv] = min(dp[i + 1][v + vv], dp[i][v] + ww)
+            }
+            // 選ばない
+            dp[i + 1][v] = min(dp[i + 1][v], dp[i][v])
+        }
+    }
+    for i in (0..m).rev() {
+        if dp[n][i] != inf {
+            println!("{}", i);
+            return;
+        }
     }
 }

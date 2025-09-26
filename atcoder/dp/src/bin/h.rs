@@ -24,11 +24,26 @@ type Deque<T> = VecDeque<T>;
 #[allow(dead_code)]
 type Heap<T> = BinaryHeap<T>;
 #[allow(dead_code)]
-type Mint = ac_library::ModInt998244353;
+type Mint = ac_library::ModInt1000000007;
 
 fn main() {
     input! {
-        n: usize,
-        a: [usize; n],
+        h: usize,
+        w: usize,
+        a: [Chars; h],
     }
+    let mut dp = vec![vec![Mint::new(0); w]; h];
+    dp[0][0] = Mint::new(1);
+
+    for i in 0..h {
+        for j in 0..w {
+            if i < h - 1 && a[i + 1][j] == '.' {
+                dp[i + 1][j] = dp[i + 1][j] + dp[i][j];
+            }
+            if j < w - 1 && a[i][j + 1] == '.' {
+                dp[i][j + 1] = dp[i][j + 1] + dp[i][j];
+            }
+        }
+    }
+    println!("{}", dp[h - 1][w - 1].val())
 }
