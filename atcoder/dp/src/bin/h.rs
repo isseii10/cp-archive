@@ -43,6 +43,7 @@ fn main() {
             if j < w - 1 && a[i][j + 1] == '.' {
                 dp[i][j + 1] = dp[i][j + 1] + dp[i][j];
             }
+
         }
     }
     println!("{}", dp[h - 1][w - 1].val())

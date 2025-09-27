@@ -29,6 +29,25 @@ type Mint = ac_library::ModInt998244353;
 fn main() {
     input! {
         n: usize,
-        a: [usize; n],
+        p: [f64; n],
     }
+    // dp[i][j] := i番目までのコインで、j個表が出る確率
+    let mut dp = vec![vec![0.0; n + 1]; n + 1];
+    dp[0][0] = 1.0;
+    for i in 0..n {
+        for j in 0..=i {
+            // 表
+            dp[i + 1][j + 1] = dp[i + 1][j + 1] + dp[i][j] * p[i];
+            // 裏
+            dp[i + 1][j] = dp[i + 1][j] + dp[i][j] * (1.0 - p[i]);
+        }
+    }
+    // println!("{:?}", dp);
+    println!(
+        "{}",
+        dp[n]
+            .iter()
+            .enumerate()
+            .fold(0.0, |acc, (i, v)| if i * 2 >= n { acc + v } else { acc })
+    );
 }
