@@ -34,3 +34,19 @@ fn mod_pow(base: usize, exp: usize, modulus: usize) -> usize {
     }
     result
 }
+
+/// 最大公約数を求めるユークリッドの互除法 O(log(min(a, b)))
+#[snippet("gcd")]
+fn gcd(a: usize, b: usize) -> usize {
+    if b == 0 {
+        return a;
+    }
+    gcd(b, a % b)
+}
+
+/// 最小公倍数 O(log(min(a, b)))
+#[snippet("lcm")]
+#[snippet(include = "gcd")]
+fn lcm(a: usize, b: usize) -> usize {
+    a / gcd(a, b) * b
+}

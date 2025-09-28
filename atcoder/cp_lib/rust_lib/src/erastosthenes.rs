@@ -33,19 +33,3 @@ fn eratosthenes(n: usize) -> (Vec<usize>, Vec<usize>) {
     (primes, min_factor)
 }
 
-// 最大公約数を求めるユークリッドの互除法 O(log(min(a, b)))
-
-#[snippet("gcd")]
-fn gcd(a: usize, b: usize) -> usize {
-    if b == 0 {
-        return a;
-    }
-    gcd(b, a % b)
-}
-
-#[snippet("lcm")]
-#[snippet(include = "gcd")]
-fn lcm(a: usize, b: usize) -> usize {
-    a / gcd(a, b) * b
-}
-
