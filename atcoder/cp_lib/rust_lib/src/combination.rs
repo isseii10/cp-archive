@@ -1,6 +1,9 @@
-use ac_library::ModInt100000007 as Mint;
+use cargo_snippet::snippet;
+
+type Mint = ac_library::ModInt998244353;
 
 /// 階乗とその逆元を前計算して nCr, nPr, H を求める構造体
+#[snippet]
 pub struct CombFactorial {
     fac: Vec<Mint>,
     fac_inv: Vec<Mint>,
@@ -49,6 +52,7 @@ impl CombFactorial {
 
 /// パスカルの三角形で nCr を求める構造体
 /// mが合成数の場合(ConbFactorialが使えない場合)に使用する
+#[snippet]
 pub struct CombPascal {
     pascal: Vec<Vec<Mint>>,
 }

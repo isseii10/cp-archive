@@ -1,9 +1,11 @@
+use std::cmp::Reverse;
+
 fn topological_sort(
-    n: usize,
+   n: usize,
     graph: &Vec<Vec<usize>>,
     indeg: &mut Vec<usize>,
 ) -> Option<Vec<usize>> {
-    let mut heapq = Heap::new();
+    let mut heapq = std::collections::BinaryHeap::new();
     for (v, &d) in indeg.iter().enumerate() {
         if d == 0 {
             heapq.push(Reverse(v));

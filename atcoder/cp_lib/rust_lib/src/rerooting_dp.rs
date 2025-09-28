@@ -1,4 +1,5 @@
 // TODO: Monoid, merge, add_rootを実装してRerootingDPに渡す
+use std::fmt::Debug;
 #[derive(Clone, Debug)]
 pub struct RerootingMonoid {
     size: usize,
