@@ -11,3 +11,8 @@ abc:
 		cp -n template.go abc$(contest)/$$p/main.go && \
 		echo "Created: abc$(contest)/$$p/main.go"; \
 	done
+
+.PHONY: snippets
+snippets:
+	cd cp_lib/rust_lib && \
+	cargo snippet --type vscode >> ../../snippets/rust.json
