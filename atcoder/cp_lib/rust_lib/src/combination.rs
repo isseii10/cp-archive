@@ -2,13 +2,18 @@ use cargo_snippet::snippet;
 
 type Mint = ac_library::ModInt998244353;
 
-/// 階乗とその逆元を前計算して nCr, nPr, H を求める構造体
-#[snippet]
+/// 階乗とその逆元を前計算して
+/// - 二項係数 nCr
+/// - 順列 nPr
+/// - 重複組み合わせ nHr
+/// を求める構造体
+#[snippet("CombFactorial")]
 pub struct CombFactorial {
     fac: Vec<Mint>,
     fac_inv: Vec<Mint>,
 }
 
+#[snippet("CombFactorial")]
 impl CombFactorial {
     /// n までの階乗と逆元を前計算
     pub fn new(n: usize) -> Self {
@@ -50,13 +55,15 @@ impl CombFactorial {
     }
 }
 
+/// 二項係数 nCr
 /// パスカルの三角形で nCr を求める構造体
 /// mが合成数の場合(ConbFactorialが使えない場合)に使用する
-#[snippet]
+#[snippet("CombPascal")]
 pub struct CombPascal {
     pascal: Vec<Vec<Mint>>,
 }
 
+#[snippet("CombPascal")]
 impl CombPascal {
     /// n までの nCr を前計算
     pub fn new(n: usize) -> Self {

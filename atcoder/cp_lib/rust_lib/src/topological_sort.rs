@@ -1,7 +1,10 @@
+use cargo_snippet::snippet;
+
 use std::cmp::Reverse;
 
+#[snippet("topological_sort")]
 fn topological_sort(
-   n: usize,
+    n: usize,
     graph: &Vec<Vec<usize>>,
     indeg: &mut Vec<usize>,
 ) -> Option<Vec<usize>> {

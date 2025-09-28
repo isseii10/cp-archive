@@ -15,4 +15,4 @@ abc:
 .PHONY: snippets
 snippets:
 	cd cp_lib/rust_lib && \
-	cargo snippet --type vscode >> ../../snippets/rust.json
+	cargo snippet --type vscode > ../../snippets/rust.json

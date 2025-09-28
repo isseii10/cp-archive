@@ -1,3 +1,6 @@
+use cargo_snippet::snippet;
+
+#[snippet("next_permutation")]
 fn next_permutation<T: Ord>(a: &mut [T]) -> bool {
     let n = a.len();
     if n < 2 {
