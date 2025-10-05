@@ -1,4 +1,5 @@
 pub mod combination;
+pub mod dijkstra;
 pub mod erastosthenes;
 pub mod next_permutation;
 pub mod next_pos;

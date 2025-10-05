@@ -99,6 +99,59 @@
       "}"
     ]
   },
+  "dijkstra": {
+    "prefix": "dijkstra",
+    "body": [
+      "/// ダイクストラ法",
+      "/// - `graph[v]` に `(to, cost)` のタプルを持つ隣接リスト形式",
+      "/// - 負のコストは非対応（必要ならBellman-Fordを使う）",
+      "/// 返り値: (dist, prev)",
+      "/// - dist[v]: 始点からvへの最短距離（i64::MAXなら到達不可）",
+      "/// - prev[v]: vに至る直前の頂点（Noneなら未到達）",
+      "pub fn dijkstra(graph: &Vec<Vec<(usize, i64)>>, start: usize) -> (Vec<i64>, Vec<Option<usize>>) {",
+      "    let n = graph.len();",
+      "    let mut dist = vec![i64::MAX; n];",
+      "    let mut prev = vec![None; n];",
+      "    let mut pq = BinaryHeap::new();",
+      "    dist[start] = 0;",
+      "    pq.push(Reverse((0, start)));",
+      "    while let Some(Reverse((d, v))) = pq.pop() {",
+      "        if d > dist[v] {",
+      "            continue;",
+      "        }",
+      "        for &(to, cost) in &graph[v] {",
+      "            let nd = d + cost;",
+      "            if nd < dist[to] {",
+      "                dist[to] = nd;",
+      "                prev[to] = Some(v);",
+      "                pq.push(Reverse((nd, to)));",
+      "            }",
+      "        }",
+      "    }",
+      "    (dist, prev)",
+      "}",
+      "/// 経路を復元する",
+      "/// - start: 始点",
+      "/// - goal: 終点",
+      "/// - prev: dijkstra() が返した prev ベクタ",
+      "pub fn reconstruct_path(start: usize, goal: usize, prev: &Vec<Option<usize>>) -> Vec<usize> {",
+      "    let mut path = vec![];",
+      "    let mut cur = Some(goal);",
+      "    while let Some(v) = cur {",
+      "        path.push(v);",
+      "        if v == start {",
+      "            break;",
+      "        }",
+      "        cur = prev[v];",
+      "    }",
+      "    if path.last() != Some(&start) {",
+      "        return vec![];",
+      "    }",
+      "    path.reverse();",
+      "    path",
+      "}"
+    ]
+  },
   "eratosthenes": {
     "prefix": "eratosthenes",
     "body": [
@@ -134,6 +187,7 @@
   "gcd": {
     "prefix": "gcd",
     "body": [
+      "/// 最大公約数を求めるユークリッドの互除法 O(log(min(a, b)))",
       "fn gcd(a: usize, b: usize) -> usize {",
       "    if b == 0 {",
       "        return a;",
@@ -153,12 +207,14 @@
   "lcm": {
     "prefix": "lcm",
     "body": [
+      "/// 最大公約数を求めるユークリッドの互除法 O(log(min(a, b)))",
       "fn gcd(a: usize, b: usize) -> usize {",
       "    if b == 0 {",
       "        return a;",
       "    }",
       "    gcd(b, a % b)",
       "}",
+      "/// 最小公倍数 O(log(min(a, b)))",
       "fn lcm(a: usize, b: usize) -> usize {",
       "    a / gcd(a, b) * b",
       "}"
