@@ -16,12 +16,14 @@ pub fn dijkstra(graph: &Vec<Vec<(usize, i64)>>, start: usize) -> (Vec<i64>, Vec<
     let n = graph.len();
     let mut dist = vec![i64::MAX; n];
     let mut prev = vec![None; n];
+    // 到達できる頂点の中で短い順に取り出す優先度付きキュー
     let mut pq = BinaryHeap::new();
 
     dist[start] = 0;
     pq.push(Reverse((0, start)));
 
     while let Some(Reverse((d, v))) = pq.pop() {
+        // すでにより良い距離が確定している場合はスキップ
         if d > dist[v] {
             continue;
         }
