@@ -1,5 +1,6 @@
 #[allow(unused_imports)]
 use amplify::confinement::Collection;
+use itertools::Itertools;
 use ordered_float::OrderedFloat;
 #[allow(unused_imports)]
 use proconio::{input, marker::Chars};
@@ -30,40 +31,57 @@ type Mint = ac_library::ModInt998244353;
 fn main() {
     input! {
         n: usize,
-        a: [usize; n],
+        a: [i64; n],
     }
-    // dp[i][j] := i番目まで見た時の平均値の最大(jはi番目を選んだかどうか)
-    let mut dp = vec![vec![(0, 0); 2]; n + 1];
-    for i in 0..n {
-        let (s0, l0) = dp[i][0];
-        let (s1, l1) = dp[i][1];
+    // 平均値
 
-        // i番目を選ばない
-        dp[i + 1][0] = (s1, l1);
+    // 中央値
+    println!("{}", max_med(n, &a));
+}
 
-        // i番目を選ぶ
-        if s0 * l1 > s1 * l0 {
-            // s0/l0 > s1/l1
-            dp[i + 1][1] = (s0 + a[i], l0 + 1);
-        } else if s0 * l1 < s1 * l0 {
-            // s0/l0 < s1/l1
-            dp[i + 1][1] = (s1 + a[i], l1 + 1);
+fn max_ave(n: usize, a: &[i64]) -> f64 {
+    let mut ok = 0;
+    let mut ng = a.iter().sum::<i64>() + 1;
+    while ng - ok > 1 {
+        let mid = (ok + ng) / 2;
+        // mid以上の合計値を取れるか？
+        let b = a.iter().map(|&v| v - mid).collect_vec();
+        if check(n, &b) > 0 {
+            ok = mid
         } else {
-            // 平均が同じなら、要素数が少ない方
-            if l0 < l1 {
-                dp[i + 1][1] = (s0 + a[i], l0 + 1);
-            } else {
-                dp[i + 1][1] = (s1 + a[i], l1 + 1);
-            }
+            ng = mid
         }
     }
-    println!("{:?}", dp);
-    println!(
-        "{:.10}",
-        dp[n]
+    0.0
+}
+fn max_med(n: usize, a: &[i64]) -> i64 {
+    let mut ok = 0;
+    let mut ng = a.iter().sum::<i64>() + 1;
+    while ng - ok > 1 {
+        let mid = (ok + ng) / 2;
+        // mid以上の中央値を取れるか？
+        let b = a
             .iter()
-            .map(|&(s, l)| OrderedFloat(s as f64 / l as f64))
-            .max()
-            .unwrap()
-    )
+            .map(|&v| if v - mid >= 0 { 1 } else { -1 })
+            .collect_vec();
+        if check(n, &b) > 0 {
+            ok = mid
+        } else {
+            ng = mid
+        }
+    }
+    return ok;
+}
+
+fn check(n: usize, b: &[i64]) -> i64 {
+    let mut dp = vec![vec![0; 2]; n + 1];
+    for i in 0..n {
+        // 選ばない
+        dp[i + 1][0] = max(dp[i + 1][0], dp[i][1]);
+        // 選ぶ
+        dp[i + 1][1] = max(dp[i + 1][1], dp[i][0] + b[i]);
+        dp[i + 1][1] = max(dp[i + 1][1], dp[i][1] + b[i]);
+    }
+
+    return max(dp[n][0], dp[n][1]);
 }
