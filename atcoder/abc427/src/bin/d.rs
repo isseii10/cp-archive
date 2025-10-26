@@ -49,6 +49,7 @@ fn solve() {
     let mut dp = vec![vec![0; n]; 2 * k + 1];
     for j in 0..n {
         dp[0][j] = if s[j] == 'A' { 1 } else { -1 };
+        // println!("dp[0][{}] = {}", j, dp[0][j]);
     }
 
     for i in 0..2 * k {
@@ -63,7 +64,8 @@ fn solve() {
             } else {
                 dp[i + 1][from] = if (i + 1) % 2 == 0 { 1 } else { -1 };
             }
+            // println!("dp[{}][{}] = {}", i + 1, from, dp[i + 1][from]);
         }
     }
-    println!("{}", if dp[k][0] == 1 { "Alice" } else { "Bob" })
+    println!("{}", if dp[2 * k][0] == 1 { "Alice" } else { "Bob" })
 }

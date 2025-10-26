@@ -66,15 +66,10 @@ fn main() {
         while r < sa.len() && sa[r].1 - sa[l - 1].1 < c {
             r += 1;
         }
+        // 2週目の末尾(sa.len())に到達することはないので書かなくても大丈夫
         if r == sa.len() {
             break;
         }
-        // println!(
-        //     "place: {}, sa[r]: {}, sa[l-1]: {}",
-        //     sa[l].0,
-        //     sa[r].1,
-        //     sa[l - 1].1
-        // );
         ans += (sa[l].0 - sa[l - 1].0) * (sa[r].1 - sa[l - 1].1)
     }
     println!("{}", ans)
