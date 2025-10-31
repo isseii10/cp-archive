@@ -38,7 +38,7 @@ pub struct RerootingDP<T: Clone + Debug> {
     pub dp_all: Vec<T>,
 }
 
-#[snippet(RerootingDP)]
+#[snippet("RerootingDP")]
 impl<T: Clone + Debug> RerootingDP<T> {
     pub fn new(size: usize, identity: T, merge: fn(T, T) -> T, add_root: fn(T) -> T) -> Self {
         Self {
