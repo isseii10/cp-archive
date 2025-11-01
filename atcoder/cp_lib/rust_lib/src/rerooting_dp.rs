@@ -1,14 +1,14 @@
 use cargo_snippet::snippet;
 
-// TODO: Monoid, merge, add_rootを実装してRerootingDPに渡す
-use std::fmt::Debug;
 #[derive(Clone, Debug)]
 #[snippet("RerootingDP")]
+///  TODO: Monoid, merge, add_rootを実装してRerootingDPに渡す
 pub struct RerootingMonoid {
     size: usize,
     dist_sum: usize,
 }
 
+#[snippet("RerootingDP")]
 fn merge(a: RerootingMonoid, b: RerootingMonoid) -> RerootingMonoid {
     RerootingMonoid {
         size: a.size + b.size,
@@ -16,6 +16,7 @@ fn merge(a: RerootingMonoid, b: RerootingMonoid) -> RerootingMonoid {
     }
 }
 
+#[snippet("RerootingDP")]
 fn add_root(a: RerootingMonoid) -> RerootingMonoid {
     RerootingMonoid {
         size: a.size + 1,
@@ -25,7 +26,7 @@ fn add_root(a: RerootingMonoid) -> RerootingMonoid {
 
 /// RerootingDP（全方位木DP）
 #[snippet("RerootingDP")]
-pub struct RerootingDP<T: Clone + Debug> {
+pub struct RerootingDP<T: Clone + std::fmt::Debug> {
     pub size: usize,
     pub graph: Vec<Vec<usize>>,
     pub identity: T,          // 単位元
@@ -39,7 +40,7 @@ pub struct RerootingDP<T: Clone + Debug> {
 }
 
 #[snippet("RerootingDP")]
-impl<T: Clone + Debug> RerootingDP<T> {
+impl<T: Clone + std::fmt::Debug> RerootingDP<T> {
     pub fn new(size: usize, identity: T, merge: fn(T, T) -> T, add_root: fn(T) -> T) -> Self {
         Self {
             size,

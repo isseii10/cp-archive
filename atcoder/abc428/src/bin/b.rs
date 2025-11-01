@@ -26,6 +26,36 @@ type Mint = ac_library::ModInt998244353;
 fn main() {
     input! {
         n: usize,
-        a: [usize; n],
+        k: usize,
+        s: Chars,
     }
+    let mut ans = 0;
+    for i in 0..=n - k {
+        let a = s[i..i + k].iter().collect::<String>();
+        let mut res = 1;
+        for j in i + 1..=n - k {
+            let b = s[j..j + k].iter().collect::<String>();
+            if a == b {
+                res += 1;
+            }
+        }
+        ans = max(ans, res);
+    }
+    let mut anss = vec![];
+    for i in 0..=n - k {
+        let mut res = 1;
+        let a = s[i..i + k].iter().collect::<String>();
+        for j in i + 1..=n - k {
+            let b = s[j..j + k].iter().collect::<String>();
+            if a == b {
+                res += 1;
+            }
+        }
+        if res == ans {
+            anss.push(a)
+        }
+    }
+    anss.sort();
+    println!("{}", ans);
+    println!("{}", anss.join(" "));
 }

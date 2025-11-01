@@ -25,17 +25,26 @@ type Mint = ac_library::ModInt998244353;
 
 fn main() {
     input! {
-        t: usize,
+        n: usize,
+        m: usize,
+        s: [Chars; n],
     }
-
-    for _ in 0..t {
-        solve()
+    let mut counter = Map::new();
+    for i in 0..=n - m {
+        for j in 0..=n - m {
+            let mut tmp = vec![];
+            for a in 0..m {
+                for b in 0..m {
+                    tmp.push(s[a + i][b + j]);
+                }
+            }
+            // println!("i:{}, j:{} {:?}", i, j, tmp);
+            if let Some(c) = counter.get_mut(&tmp) {
+                *c += 1
+            } else {
+                counter.push((tmp, 1));
+            }
+        }
     }
-}
-
-fn solve() {
-    input! {
-        c: Chars,
-        d: Chars,
-    }
+    println!("{}", counter.len())
 }

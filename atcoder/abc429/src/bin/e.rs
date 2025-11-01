@@ -1,6 +1,5 @@
 #[allow(unused_imports)]
 use amplify::confinement::Collection;
-use itertools::Itertools;
 #[allow(unused_imports)]
 use proconio::{input, marker::Chars};
 #[allow(unused_imports)]
@@ -36,30 +35,48 @@ fn main() {
         g[u - 1].push(v - 1);
         g[v - 1].push(u - 1);
     }
-    let ans = vec![-1; n];
-    let mut start = 0;
+    let mut starts = vec![];
+    for i in 0..n {
+        if s[i] == 'S' {
+            starts.push(i);
+        }
+    }
+    let dists = multi_source_bfs(starts, &g, n);
+
     for i in 0..n {
         if s[i] == 'D' {
-            start = i;
-            break;
+            println!("{}", dists[i].iter().map(|(d, _)| d).sum::<usize>())
         }
     }
 }
 
-fn dfs(
-    g: &[Vec<usize>],
-    dist: &mut [usize],
-    memo: &mut [usize],
-    now: usize,
-    parent: Option<usize>,
-) {
-    for &child in g[now].iter() {
-        if parent.is_some() && parent.unwrap() == child {
-            continue;
-        }
-        if dist[child] <= dist[now] + 1 {
-            continue;
-        }
-        dfs(g, dist, memo, child, Some(now))
+fn multi_source_bfs(starts: Vec<usize>, g: &[Vec<usize>], n: usize) -> Vec<Vec<(usize, usize)>> {
+    let mut dists = vec![vec![]; n];
+    let mut deque = Deque::new();
+    for &s in starts.iter() {
+        dists[s].push((0, s));
+        deque.push_back((s, s, 0));
     }
+    while let Some((v, sv, d)) = deque.pop_front() {
+        for &nv in g[v].iter() {
+            if ok(&dists[nv], sv) {
+                dists[nv].push((d + 1, sv));
+                deque.push_back((nv, sv, d + 1));
+            }
+        }
+    }
+    dists
+}
+
+fn ok(dists: &[(usize, usize)], s: usize) -> bool {
+    if dists.len() >= 2 {
+        return false;
+    }
+    // distsには異なる2点からの最短距離が格納されてほしいので、同じ始点から来るケースを省く
+    for &(_, sv) in dists.iter() {
+        if sv == s {
+            return false;
+        }
+    }
+    true
 }

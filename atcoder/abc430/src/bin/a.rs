@@ -25,17 +25,14 @@ type Mint = ac_library::ModInt998244353;
 
 fn main() {
     input! {
-        t: usize,
+        a: usize,
+        b: usize,
+        c: usize,
+        d: usize,
     }
-
-    for _ in 0..t {
-        solve()
+    let mut ok = true;
+    if c >= a && d < b {
+        ok = false
     }
-}
-
-fn solve() {
-    input! {
-        c: Chars,
-        d: Chars,
-    }
+    println!("{}", if ok { "No" } else { "Yes" });
 }

@@ -1,2 +1,5 @@
 [build]
 target-dir = "target"
+
+[target.'cfg(all())']
+rustflags = ["-A", "clippy::needless_range_loop"]

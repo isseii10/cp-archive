@@ -25,7 +25,21 @@ type Mint = ac_library::ModInt998244353;
 
 fn main() {
     input! {
-        n: usize,
-        a: [usize; n],
+        s: i64,
+        a: i64,
+        b: i64,
+        mut x: i64,
     }
+    let mut ans = 0;
+    while x > 0 {
+        if x - a > 0 {
+            ans += s * a;
+            x -= a;
+        } else {
+            ans += s * x;
+            x = 0;
+        }
+        x -= b;
+    }
+    println!("{}", ans)
 }

@@ -25,17 +25,7 @@ type Mint = ac_library::ModInt998244353;
 
 fn main() {
     input! {
-        t: usize,
-    }
-
-    for _ in 0..t {
-        solve()
-    }
-}
-
-fn solve() {
-    input! {
-        c: Chars,
-        d: Chars,
+        n: usize,
+        a: [usize; n],
     }
 }
