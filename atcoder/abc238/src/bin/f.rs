@@ -1,4 +1,3 @@
-use ac_library::z_algorithm;
 #[allow(unused_imports)]
 use amplify::confinement::Collection;
 #[allow(unused_imports)]
@@ -26,33 +25,7 @@ type Mint = ac_library::ModInt998244353;
 
 fn main() {
     input! {
-        t: usize,
+        n: usize,
+        a: [usize; n],
     }
-    for _ in 0..t {
-        solve()
-    }
-}
-
-fn solve() {
-    input! {
-        a: Chars,
-        mut b: Chars,
-    }
-    b.push('&');
-    for _ in 0..2 {
-        for &c in a.iter() {
-            b.push(c);
-        }
-    }
-    let z = z_algorithm(&b.iter().collect::<String>());
-
-    let n = a.len();
-    for i in 0..n {
-        // b&以降を探索
-        if z[n + 1 + i] == n {
-            println!("{}", i);
-            return;
-        }
-    }
-    println!("{}", -1)
 }
